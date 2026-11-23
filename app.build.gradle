@@ -1,4 +1,4 @@
-plugins{id 'com.android.application'}
+plugins{id 'com.android.application' version '8.5.2'}
 android{
  namespace 'app.chessquest'
  compileSdk 34
