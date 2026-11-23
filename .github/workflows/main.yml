@@ -30,16 +30,17 @@ jobs:
           mkdir -p app/src/main/jniLibs/arm64-v8a sf
           api=$( (curl -s -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/repos/official-stockfish/Stockfish/releases/latest; curl -s -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/repos/official-stockfish/Stockfish/releases) )
           urls=$(echo "$api" | grep -o 'https://[^"]*android[^"]*' | awk '!x[$0]++')
-          echo "Fichiers Android trouvés :"; echo "$urls"
           url=$(echo "$urls" | grep -i universal | head -1)
           [ -z "$url" ] && url=$(echo "$urls" | grep -iE 'armv8|arm64' | grep -vi dotprod | head -1)
           [ -z "$url" ] && url=$(echo "$urls" | grep -iE 'armv8|arm64' | head -1)
           echo "Choisi : $url"
           [ -n "$url" ] || { echo "Aucun fichier Android trouvé"; exit 1; }
-          curl -fL -o sf.pkg "$url"
+          curl -fsSL -o sf.pkg "$url"
           tar -xf sf.pkg -C sf
-          f=$(find sf -type f -size +300k | head -1)
+          f=$(find sf -type f -printf '%s %p\n' | sort -rn | head -1 | cut -d' ' -f2-)
           echo "Binaire : $f"
+          file "$f" || true
+          chmod +x "$f"
           cp "$f" app/src/main/jniLibs/arm64-v8a/libstockfish.so
       - run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
