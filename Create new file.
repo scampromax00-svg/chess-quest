@@ -1,0 +1,49 @@
+.github/workflows/build.yml
+name: Build APK
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Organiser les fichiers
+        run: |
+          mkdir -p app/src/main/java/app/chessquest app/src/main/assets app/src/main/res/mipmap-xxxhdpi
+          mv app.build.gradle app/build.gradle
+          mv AndroidManifest.xml app/src/main/
+          mv MainActivity.java app/src/main/java/app/chessquest/
+          mv index.html app/src/main/assets/
+          mv ic_launcher.png app/src/main/res/mipmap-xxxhdpi/
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Trouver et télécharger Stockfish Android (arm64)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p app/src/main/jniLibs/arm64-v8a sf
+          api=$( (curl -s -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/repos/official-stockfish/Stockfish/releases/latest; curl -s -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/repos/official-stockfish/Stockfish/releases) )
+          urls=$(echo "$api" | grep -o 'https://[^"]*android[^"]*' | awk '!x[$0]++')
+          echo "Fichiers Android trouvés :"; echo "$urls"
+          url=$(echo "$urls" | grep -i universal | head -1)
+          [ -z "$url" ] && url=$(echo "$urls" | grep -iE 'armv8|arm64' | grep -vi dotprod | head -1)
+          [ -z "$url" ] && url=$(echo "$urls" | grep -iE 'armv8|arm64' | head -1)
+          echo "Choisi : $url"
+          [ -n "$url" ] || { echo "Aucun fichier Android trouvé"; exit 1; }
+          curl -fL -o sf.pkg "$url"
+          tar -xf sf.pkg -C sf
+          f=$(find sf -type f -size +300k | head -1)
+          echo "Binaire : $f"
+          cp "$f" app/src/main/jniLibs/arm64-v8a/libstockfish.so
+      - run: gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ChessQuest-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
