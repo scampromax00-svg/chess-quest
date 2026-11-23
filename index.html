@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chess Quest</title>
+<meta name="theme-color" content="#0b0820"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Chess Quest">
+<style>
+:root{--bg:#faf9f6;--fg:#1f1e1b;--card:#fff;--ln:#d8d4c8;--lt:#f0d9b5;--dk:#b58863;--ac:#c2410c;--mu:#6b675d;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1917;--fg:#eceae3;--card:#262522;--ln:#3a3834;--mu:#a09b8f}}
+:root[data-theme="dark"]{--bg:#1a1917;--fg:#eceae3;--card:#262522;--ln:#3a3834;--mu:#a09b8f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:460px;margin:0 auto;padding:12px}
+h1{font-size:20px;margin:4px 0 8px}
+#st{min-height:24px;margin:0 0 8px;color:var(--mu);font-size:15px}
+#bd{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));width:100%;aspect-ratio:1;border:2px solid var(--ln);border-radius:6px;overflow:hidden}
+.c{min-width:0;min-height:0;overflow:hidden;line-height:1;display:flex;align-items:center;justify-content:center;font-size:min(9vw,40px);position:relative;cursor:pointer;user-select:none}
+.l{background:var(--lt)}.d{background:var(--dk)}
+#nt{min-height:22px;margin:8px 0 0;font-size:14px;font-weight:600;color:var(--ac)}
+.c small{position:absolute;font-size:10px;font-weight:700;line-height:1;pointer-events:none}
+.rk{top:3px;left:3px}.fl{bottom:2px;right:3px}
+.l small{color:var(--dk)}.d small{color:var(--lt)}
+#rc:not(:empty){background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:14px}
+#rc ul{margin:4px 0 8px;padding-left:18px}#rc p{margin:8px 0 0;font-weight:600}#rc button{margin-top:6px}
+[hidden]{display:none!important}
+#hm{display:grid;gap:12px;margin-top:14px}
+.big{padding:18px 16px;text-align:left;font-size:18px;font-weight:600;border-radius:12px}
+.big small{display:block;font-weight:400;font-size:13px;color:var(--mu);margin-top:4px}
+#bk{margin:0 0 8px}
+#ls h3{font-size:15px;margin:14px 0 6px}
+#ls .g{display:flex;flex-wrap:wrap;gap:6px}
+#ls button{font-size:13px;text-align:left}
+#lp{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:14px;line-height:1.7}
+#lp b{display:block;font-size:16px}
+#gv.l>.row,#gv.l>#nt,#gv.l>#rc,#gv.l>p:not(#st){display:none}
+.c.s{outline:3px solid var(--ac);outline-offset:-3px}
+.c.m{background:#fde68a}
+.c.t::after{content:"";width:28%;height:28%;border-radius:50%;background:rgba(194,65,12,.55);position:absolute}
+.c.t.x::after{width:84%;height:84%;background:none;border:4px solid rgba(194,65,12,.6)}
+.w{color:#fff;text-shadow:0 0 2px #000,0 0 2px #000,0 0 1px #000}.b{color:#111;text-shadow:0 0 1px #fff}
+.row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+button{font:inherit;font-size:14px;padding:8px 11px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:var(--fg);cursor:pointer}
+button.p{background:var(--ac);border-color:var(--ac);color:#fff}
+button:disabled{opacity:.5}
+#co{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:10px;margin-top:8px}
+#lg{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.u,.a{padding:8px 10px;border-radius:10px;white-space:pre-wrap;font-size:15px}
+.u{background:var(--ac);color:#fff;align-self:flex-end;max-width:85%}
+.a{background:var(--bg);border:1px solid var(--ln)}
+#f{display:flex;gap:6px}
+#q{flex:1;font:inherit;font-size:16px;padding:8px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--fg);min-width:0}
+:root:root:root{--bg:#0b0820;--fg:#f4f1ff;--card:rgba(30,22,66,.78);--ln:#5b46b8;--lt:#5b46b8;--dk:#2a1f6b;--ac:#ff4fa3;--mu:#b7aee8;color-scheme:dark}
+body{background:radial-gradient(circle at 15% 0,#3a1c7a 0,transparent 45%),radial-gradient(circle at 95% 35%,#0e5a8a 0,transparent 40%),radial-gradient(circle at 25% 100%,#7a1c5a 0,transparent 45%),#0b0820;background-attachment:fixed;min-height:100vh}
+h1{font-size:32px;letter-spacing:3px;text-align:center;margin:8px 0 0;font-weight:900;text-shadow:0 0 18px rgba(255,79,163,.6)}
+h1 span{background:linear-gradient(90deg,#22d3ee,#a78bfa,#ff4fa3);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.sub{text-align:center;color:var(--mu);font-size:14px;margin:0}
+#st{background:rgba(0,0,0,.4);border:1px solid var(--ln);border-radius:20px;padding:5px 12px;color:#fff;text-align:center}
+#bd{border:3px solid #a78bfa;border-radius:12px;box-shadow:0 0 0 2px #1c1640,0 0 28px rgba(167,139,250,.55),inset 0 0 20px rgba(0,0,0,.4)}
+.l{background:linear-gradient(135deg,#6d5bd0,#5a49b8)}.d{background:linear-gradient(135deg,#2a2070,#1d1655)}
+.w{color:#eafcff;text-shadow:0 0 6px #22d3ee,0 0 12px #22d3ee,0 2px 2px #000}
+.b{color:#ff7ab8;text-shadow:0 0 6px #ff4fa3,0 0 12px #ff4fa3,0 2px 2px #000}
+.c.s{outline:3px solid #fde047;box-shadow:inset 0 0 14px #fde047}
+.c.m{background:linear-gradient(135deg,#b45309,#f59e0b)}
+.c.t::after{background:rgba(52,211,153,.9);box-shadow:0 0 10px #34d399}
+.c.t.x::after{border-color:#f43f5e;box-shadow:0 0 12px #f43f5e}
+.c.m span{animation:pop .35s ease-out}
+@keyframes pop{0%{transform:scale(.3) rotate(-15deg)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+button{background:linear-gradient(180deg,#3b2d8f,#271c66);border:1px solid #7c6ae6;color:#f4f1ff;border-radius:10px;box-shadow:0 3px 0 #150f3d,0 0 12px rgba(124,106,230,.35);transition:transform .1s}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 #150f3d}
+button.p{background:linear-gradient(180deg,#ff6bb5,#e11d74);border-color:#ffa6d2;box-shadow:0 3px 0 #7a0c3e,0 0 14px rgba(255,79,163,.6)}
+#hm .big:nth-of-type(1){background:linear-gradient(135deg,#0ea5e9,#6d28d9);border-color:#7dd3fc}
+#hm .big:nth-of-type(2){background:linear-gradient(135deg,#f97316,#e11d74);border-color:#fdba74}
+.big{color:#fff;box-shadow:0 5px 0 #150f3d,0 0 22px rgba(167,139,250,.5);padding:20px 16px}
+.big small{color:#fff;opacity:.9}
+.xp,#ins{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:10px 12px;box-shadow:0 0 18px rgba(124,106,230,.35);font-size:14px}
+.bar{height:12px;background:#150f3d;border-radius:8px;overflow:hidden;margin-top:6px;border:1px solid #4c3a9e}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#a78bfa,#ff4fa3);box-shadow:0 0 10px #a78bfa}
+#ls h3{font-size:16px;margin:16px 0 8px;text-shadow:0 0 10px #a78bfa}
+#ls .g button{border-radius:12px;padding:9px 10px;border-width:2px}
+.k0 button{border-color:#38bdf8}.k1 button{border-color:#fb7185}.k2 button{border-color:#4ade80}.k3 button{border-color:#fbbf24}.k4 button{border-color:#c084fc}
+#ls button.dn{background:linear-gradient(180deg,#b45309,#78350f);box-shadow:0 3px 0 #451a03,0 0 12px rgba(253,224,71,.6)}
+.u{background:linear-gradient(135deg,#ff4fa3,#7c3aed)}
+#hm .big:nth-of-type(3){background:linear-gradient(135deg,#eab308,#16a34a);border-color:#fde047}
+body{--bg0:#07120d;--b1:#0f3d2e;--b2:#3b2f0b;--card:rgba(12,40,30,.82);--ln:#2f7d5c;--ac:#facc15;--mu:#a7d9c0;--sl:#f0e6c8;--sd:#6b9a62;--pw:#fffdf5;--pb:#1c1f1a;--gl:#facc15;--a1:#10b981;--a2:#facc15;--bd:#d4af37;--pt:#1a1305;--g1:linear-gradient(135deg,#059669,#065f46);--g2:linear-gradient(135deg,#d4af37,#92400e);--g3:linear-gradient(135deg,#0d9488,#1e3a8a)}
+body[data-t='ocean']{--bg0:#04101f;--b1:#0b3a66;--b2:#06314a;--card:rgba(8,32,58,.82);--ln:#2b6cb0;--ac:#38bdf8;--mu:#a5d0f0;--sl:#d6e9fa;--sd:#4f86c0;--pw:#fff;--pb:#0b1f3f;--gl:#22d3ee;--a1:#0ea5e9;--a2:#22d3ee;--bd:#7dd3fc;--pt:#04101f;--g1:linear-gradient(135deg,#0284c7,#1e3a8a);--g2:linear-gradient(135deg,#06b6d4,#0369a1);--g3:linear-gradient(135deg,#6366f1,#0c4a6e)}
+body[data-t='rose']{--bg0:#1a0a16;--b1:#5b1a4a;--b2:#7a2d1e;--card:rgba(52,18,44,.82);--ln:#b8456e;--ac:#fb7185;--mu:#f3c0d0;--sl:#fde8d7;--sd:#c9788a;--pw:#fffaf5;--pb:#3b1230;--gl:#fb7185;--a1:#fb7185;--a2:#f59e0b;--bd:#fda4af;--pt:#fff;--g1:linear-gradient(135deg,#e11d74,#9d174d);--g2:linear-gradient(135deg,#f59e0b,#be123c);--g3:linear-gradient(135deg,#a855f7,#9d174d)}
+body[data-t='neon']{--bg0:#0b0820;--b1:#3a1c7a;--b2:#0e5a8a;--card:rgba(30,22,66,.78);--ln:#5b46b8;--ac:#ff4fa3;--mu:#b7aee8;--sl:#6d5bd0;--sd:#2a2070;--pw:#eafcff;--pb:#ff7ab8;--gl:#22d3ee;--a1:#22d3ee;--a2:#ff4fa3;--bd:#a78bfa;--pt:#fff;--g1:linear-gradient(135deg,#0ea5e9,#6d28d9);--g2:linear-gradient(135deg,#f97316,#e11d74);--g3:linear-gradient(135deg,#eab308,#16a34a)}
+body{background:radial-gradient(circle at 15% 0,var(--b1) 0,transparent 45%),radial-gradient(circle at 95% 35%,var(--b2) 0,transparent 40%),radial-gradient(circle at 25% 100%,var(--b1) 0,transparent 45%),var(--bg0);background-attachment:fixed}
+h1{text-shadow:0 0 18px var(--a1)}
+h1 span{background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+#bd{border-color:var(--bd);box-shadow:0 0 0 2px var(--bg0),0 0 26px var(--bd),inset 0 0 20px rgba(0,0,0,.35)}
+.l{background:linear-gradient(135deg,var(--sl),color-mix(in srgb,var(--sl) 85%,#000))}
+.d{background:linear-gradient(135deg,var(--sd),color-mix(in srgb,var(--sd) 85%,#000))}
+.l small{color:var(--sd)}.d small{color:var(--sl)}
+.w{color:var(--pw);text-shadow:1px 0 0 #000,-1px 0 0 #000,0 1px 0 #000,0 -1px 0 #000,0 0 10px var(--gl)}
+.b{color:var(--pb);text-shadow:0 0 1px #fff,0 0 7px var(--gl)}
+button{background:linear-gradient(180deg,var(--a1),color-mix(in srgb,var(--a1) 50%,#000));border-color:color-mix(in srgb,var(--a1) 65%,#fff);box-shadow:0 3px 0 rgba(0,0,0,.45),0 0 12px color-mix(in srgb,var(--a1) 45%,transparent)}
+button.p{background:linear-gradient(180deg,var(--a2),color-mix(in srgb,var(--a2) 60%,#000));border-color:color-mix(in srgb,var(--a2) 65%,#fff);color:var(--pt)}
+#hm .big:nth-of-type(1){background:var(--g1);border-color:var(--bd)}#hm .big:nth-of-type(2){background:var(--g2);border-color:var(--bd)}#hm .big:nth-of-type(3){background:var(--g3);border-color:var(--bd)}
+.big{text-shadow:0 1px 3px rgba(0,0,0,.55);color:#fff}
+.bar i{background:linear-gradient(90deg,var(--a1),var(--a2))}
+.u{background:linear-gradient(135deg,var(--a2),var(--a1));color:var(--pt)}
+#ls h3{text-shadow:0 0 10px var(--a1)}
+.cf{position:fixed;top:-30px;font-size:24px;pointer-events:none;z-index:99;animation:fall 1.9s ease-in forwards}
+@keyframes fall{to{transform:translateY(112vh) rotate(540deg)}}
+</style></head><body><main>
+<h1>♟ CHESS <span>QUEST</span></h1>
+<div id="hm"><p class="sub">Apprends, progresse, deviens Roi.</p><div id="xh"></div><button class="big" data-m="l">📚 Cours pratiques<small>50 niveaux : ouvertures, attaque, défense, finales</small></button><button class="big" data-m="g">🤖 Jouer contre un bot<small>Une vraie partie, avec une note sur 5 à chaque coup</small></button><button class="big" data-m="c">🧠 Style Carlsen<small>Ouvertures flexibles, patience, technique + un bot au style solide</small></button><div class="row"><button id="dl">⬇️ Télécharger le jeu</button><button id="ih">📲 Écran d’accueil</button><button id="th">🎨 Thème</button></div><div id="ins" hidden>Pour l’avoir sur ton écran d’accueil : ouvre le lien de l’appli dans Safari (iPhone) ou Chrome (Android), puis <b>Partager → Sur l’écran d’accueil</b> (iPhone) ou <b>⋮ → Ajouter à l’écran d’accueil</b> (Android). Le bouton « Télécharger » enregistre aussi le jeu en fichier .html, jouable hors ligne.</div></div>
+<button id="bk" hidden>← Retour</button>
+<div id="ls" hidden></div>
+<div id="gv" hidden><div id="lp" hidden></div><p id="st"></p>
+<div id="bd"></div>
+<div id="nt"></div>
+<div class="row"><button id="nw">Nouvelle partie</button><button id="un">Annuler mon coup</button><button id="bl">Bilan</button></div>
+<div id="rc"></div>
+<div id="co"><strong>Ton coach Claude</strong>
+<div class="row" id="qk"></div>
+<div id="lg"><div class="a">Salut ! Tu joues les Blancs (en bas). Touche une pièce pour voir où elle peut aller, ou demande-moi n’importe quoi.</div></div>
+<form id="f" onsubmit="return false"><input id="q" placeholder="Pose une question…" autocomplete="off"><button class="p" id="go">Envoyer</button></form>
+</div>
+<p style="font-size:12px;color:var(--mu)">Version simplifiée : pas de roque ni de prise en passant ; les pions promus deviennent des dames.</p>
+</div></main>
+<script>
+const SRC='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+const SY={k:"♚",q:"♛",r:"♜",b:"♝",n:"♞",p:"♟"},V={p:1,n:3,b:3,r:5,q:9,k:100},
+NM={p:"pion",n:"cavalier",b:"fou",r:"tour",q:"dame",k:"roi"},LT={k:"R",q:"D",r:"T",b:"F",n:"C",p:""};
+let B,turn,sel,H,last,over,msg="",lastNote="",showRc=false;
+const isW=p=>p===p.toUpperCase(),sq=i=>"abcdefgh"[i&7]+(8-(i>>3));
+function init(){B=[..."rnbqkbnr",..."pppppppp",...Array(32).fill(""),..."PPPPPPPP",..."RNBQKBNR"];
+turn="w";sel=null;H=[];last=null;over=false;lastNote="";showRc=false;msg="À toi de jouer !";}
+function mv(b,i){const p=b[i];if(!p)return[];const w=isW(p),t=p.toLowerCase(),r=i>>3,c=i&7,o=[];
+const add=(rr,cc)=>{if(rr<0||rr>7||cc<0||cc>7)return false;const j=rr*8+cc,q=b[j];if(q&&isW(q)===w)return false;o.push(j);return !q};
+if(t==="p"){const d=w?-1:1,r1=r+d;if(r1<0||r1>7)return o;if(!b[r1*8+c]){o.push(r1*8+c);if(r===(w?6:1)&&!b[(r+2*d)*8+c])o.push((r+2*d)*8+c)}
+for(const dc of[-1,1]){const cc=c+dc;if(cc<0||cc>7)continue;const q=b[r1*8+cc];if(q&&isW(q)!==w)o.push(r1*8+cc)}return o}
+if(t==="n"){for(const[a,e]of[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]])add(r+a,c+e);return o}
+if(t==="k"){for(let a=-1;a<2;a++)for(let e=-1;e<2;e++)if(a||e)add(r+a,c+e);return o}
+const D=[];if(t!=="b")D.push([1,0],[-1,0],[0,1],[0,-1]);if(t!=="r")D.push([1,1],[1,-1],[-1,1],[-1,-1]);
+for(const[a,e]of D){let k=1;while(add(r+a*k,c+e*k))k++}return o}
+function make(b,i,j){const n=b.slice();n[j]=n[i];n[i]="";if(n[j]==="P"&&j<8)n[j]="Q";if(n[j]==="p"&&j>55)n[j]="q";return n}
+function chk(b,w){const k=b.indexOf(w?"K":"k");return b.some((p,i)=>p&&isW(p)!==w&&mv(b,i).includes(k))}
+const lg=(b,i)=>mv(b,i).filter(j=>!chk(make(b,i,j),isW(b[i])));
+function all(b,w){const o=[];b.forEach((p,i)=>{if(p&&isW(p)===w)lg(b,i).forEach(j=>o.push([i,j]))});return o}
+function san(b,i,j){const t=b[i].toLowerCase(),cap=b[j];return (t==="p"?(cap?sq(i)[0]:""):LT[t])+(cap?"x":"")+sq(j)}
+function ev(b){let s=0;b.forEach((p,i)=>{if(!p)return;const w=isW(p),t=p.toLowerCase(),r=i>>3,c=i&7;let v=t==="k"?0:V[t]*100;
+if(t==="n"||t==="b"||t==="p"||t==="q")v+=(7-Math.abs(c-3.5)-Math.abs(r-3.5))*(t==="q"?1:4);
+if(t==="p")v+=(w?6-r:r-1)*5;s+=w?v:-v});return s}
+function score(b,i,j){const n=make(b,i,j),R=all(n,false);if(!R.length)return chk(n,false)?5000:0;
+let m=1e9;for(const[a,e]of R){const q=make(n,a,e);let v=ev(q);if(chk(q,true)&&!all(q,true).length)v=-5000;m=Math.min(m,v)}return m}
+function rate(i,j){const L=all(B,true);let best=-1e9,bm=null,pl=0;
+for(const[a,e]of L){const s=score(B,a,e);if(s>best){best=s;bm=[a,e]}if(a===i&&e===j)pl=s}
+const d=best-pl,n=d<=10?5:d<=60?4:d<=150?3:d<=350?2:1;let why;
+if(n===5)why="Excellent, c’est (presque) le meilleur coup !";
+else{why=pl<ev(B)-80?"Tu perds du matériel après la réponse de l’adversaire.":"Il y avait un coup plus efficace.";why+=" Meilleur coup : "+san(B,bm[0],bm[1])+"."}
+return{n,why}}
+function play(i,j){const p=B[i],t=p.toLowerCase(),cap=B[j];
+let rt=null;if(turn==="w"){const r=rt=rate(i,j);lastNote="Note : "+"★".repeat(r.n)+"☆".repeat(5-r.n)+" "+r.n+"/5 — "+r.why}
+let s=san(B,i,j);
+H.push({b:B,t:turn,r:rt});B=make(B,i,j);last=[i,j];sel=null;turn=turn==="w"?"b":"w";
+const w=turn==="w",n=all(B,w).length,c=chk(B,w);
+if(!n){over=true;msg=c?"Échec et mat ! "+(w?"L’ordinateur":"Tu")+" gagne"+(w?".":" 🎉"):"Pat : partie nulle.";s+=c?"#":"";if(c&&!w)boom()}
+else{if(c)s+="+";msg=c?(w?"Tu es en échec ! Protège ton roi.":"Échec à l’ordinateur !"):(w?"À toi de jouer !":"L’ordinateur réfléchit…")}
+H[H.length-1].s=s;render();if(!over&&turn==="b")setTimeout(cpu,500)}
+function cpu(){if(mode!=='g')return;if(carl)return cpuC();const L=all(B,false);let best=null,bs=-1e9;
+for(const[i,j]of L){const n=make(B,i,j);let s=(B[j]?V[B[j].toLowerCase()]*3:0)+Math.random();
+if(n.some((p,x)=>p&&isW(p)&&mv(n,x).includes(j)))s-=V[n[j].toLowerCase()]*2;
+if(!all(n,true).length&&chk(n,true))s+=100;if(s>bs){bs=s;best=[i,j]}}
+if(best)play(...best)}
+function render(){const bd=document.getElementById("bd"),T=sel!=null?lg(B,sel):[];let h="";
+B.forEach((p,i)=>{const r=i>>3,c=i&7;let k="c "+((r+c)%2?"d":"l");
+if(i===sel)k+=" s";if(last&&last.includes(i))k+=" m";if(T.includes(i))k+=" t"+(p?" x":"");
+h+=`<div class="${k}" data-i="${i}">${c===0?`<small class="rk">${8-r}</small>`:""}${r===7?`<small class="fl">${"abcdefgh"[c]}</small>`:""}<span class="${p?(isW(p)?"w":"b"):""}">${p?SY[p.toLowerCase()]+"\uFE0E":""}</span></div>`});
+bd.innerHTML=h;document.getElementById("st").textContent=msg;document.getElementById("nt").textContent=lastNote;if(over||showRc)recap();else document.getElementById("rc").innerHTML=""}
+document.getElementById("bd").onclick=e=>{const d=e.target.closest(".c");if(!d||over||turn!=="w")return;
+const i=+d.dataset.i,p=B[i];
+if(sel!=null&&lg(B,sel).includes(i))return mode==='p'?lmove(sel,i):play(sel,i);
+sel=p&&isW(p)?i:null;render()};
+document.getElementById("nw").onclick=()=>{init();render()};
+document.getElementById("bl").onclick=()=>{showRc=true;render()};
+document.getElementById("un").onclick=()=>{while(H.length){const h=H.pop();B=h.b;turn=h.t;if(turn==="w")break}
+last=null;over=false;sel=null;lastNote="";showRc=false;msg="À toi de jouer !";render()};
+function recap(){const el=document.getElementById("rc"),R=[];
+H.forEach((h,i)=>{if(h.r)R.push({k:(i>>1)+1,s:h.s,n:h.r.n,why:h.r.why})});
+if(!R.length){el.textContent="Joue quelques coups pour obtenir un bilan.";return}
+const avg=(R.reduce((a,x)=>a+x.n,0)/R.length).toFixed(1),g=R.filter(x=>x.n>=4),e=R.filter(x=>x.n<=2),
+li=x=>`<li>Coup ${x.k} : <b>${x.s}</b> (${x.n}/5)</li>`,le=x=>`<li>Coup ${x.k} : <b>${x.s}</b> (${x.n}/5) — ${x.why}</li>`;
+el.innerHTML=`<strong>${over?"Partie terminée — bilan":"Bilan en cours"} : ${avg}/5 de moyenne sur ${R.length} coups</strong><p>✅ Bons coups (${g.length})</p><ul>${g.map(li).join("")||"<li>Aucun pour l’instant</li>"}</ul><p>⚠️ Erreurs (${e.length})</p><ul>${e.map(le).join("")||"<li>Aucune grosse erreur, bravo !</li>"}</ul><button class="p">Bilan détaillé par Claude</button>`;
+el.querySelector("button").onclick=()=>ask("Fais-moi le bilan de ma partie : mes points forts, mes erreurs principales et 3 conseils pour progresser. Notes de l’appli par coup : "+R.map(x=>x.k+"."+x.s+" "+x.n+"/5").join(", ")+".",1);
+if(over)el.scrollIntoView({behavior:"smooth",block:"nearest"})}
+const LV=[
+['Le pion roi','','e2e4 e7e5 g1f3','Avance e4 pour occuper le centre, puis sors le cavalier en f3 : il attaque e5.'],
+['Ouverture italienne','','e2e4 e7e5 g1f3 b8c6 f1c4','Le fou en c4 vise f7, le point faible des Noirs.'],
+['Ruy López','','e2e4 e7e5 g1f3 b8c6 f1b5','Le fou en b5 met la pression sur le cavalier qui défend e5.'],
+['Gambit dame','','d2d4 d7d5 c2c4','Tu offres un pion (c4) pour dominer le centre.'],
+['Partie écossaise','','e2e4 e7e5 g1f3 b8c6 d2d4 e5d4 f3d4','Tu ouvres le jeu au centre et récupères le pion avec le cavalier.'],
+['Sicilienne','','e2e4 c7c5 g1f3 d7d6 d2d4 c5d4 f3d4','Les Noirs combattent le centre par le côté : tu ouvres la colonne d.'],
+['Défense française','','e2e4 e7e6 d2d4 d7d5 e4e5','Tu gagnes de l’espace en avançant ton pion en e5.'],
+['Caro-Kann','','e2e4 c7c6 d2d4 d7d5 b1c3','Ouverture solide : tu développes ton cavalier vers le centre.'],
+['Ouverture anglaise','','c2c4 e7e5 b1c3 g8f6 g2g3','Tu contrôles le centre à distance, le fou viendra en g2.'],
+['Système de Londres','','d2d4 d7d5 c1f4 g8f6 e2e3','Sors ton fou AVANT de fermer sa diagonale avec e3.'],
+['Prise gratuite','4k3/8/8/3q4/8/8/8/3RK3','d1d5','Regarde toujours si une pièce adverse n’est pas protégée : prends-la !'],
+['Fourchette de cavalier','r3k3/8/8/1N6/8/8/8/4K3','b5c7','Le cavalier attaque deux pièces à la fois : le roi bouge, tu prends la tour.'],
+['Fourchette de pion','4k3/8/3n1n2/8/4P3/8/8/4K3','e4e5','Un pion peut aussi attaquer deux pièces en même temps.'],
+['Brochette','4k2r/8/8/8/8/8/8/R3K3','a1a8','Échec au roi : il doit s’écarter et tu prends la pièce derrière lui.'],
+['Dame clouée','4k3/4q3/8/8/8/8/8/4RK2','e1e7','La dame est clouée devant son roi : tu peux la prendre.'],
+['Mat du couloir','6k1/5ppp/8/8/8/8/5PPP/4R1K1','#','Le roi est enfermé par ses pions : un échec de tour sur la dernière rangée est mat.'],
+['Mat de l’escalier','4k3/R7/1R6/8/8/8/8/4K3','#','Deux tours se relaient : l’une coupe la 7e rangée, l’autre donne mat.'],
+['Mat roi + dame','7k/8/5K2/8/8/8/8/6Q1','#','La dame mate, protégée par ton roi : impossible de la prendre.'],
+['Mat roi + tour','k7/8/1K6/8/8/8/8/7R','#','Ton roi coupe les cases de fuite, la tour donne l’échec sur la dernière rangée.'],
+['Mat du berger','r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR','#','Dame et fou visent f7 : la dame le prend avec mat !'],
+['Sors de l’échec','4k3/8/8/8/8/8/8/r3K3','*','Ton roi est en échec : déplace-le sur une case non attaquée.'],
+['Bloque l’échec','4r1k1/8/8/8/8/8/3B4/4K3','d2e3','Place une pièce entre la tour et ton roi : le fou en e3.'],
+['Prends l’attaquant','4k3/8/8/8/8/5n2/6P1/4K3','g2f3','Contre un échec, tu peux capturer la pièce qui le donne.'],
+['Sauve ta dame','4k3/8/8/4p3/3Q4/8/8/4K3','~','Ta dame est attaquée par un pion ! Déplace-la ou prends le pion.'],
+['Sauve ta tour','4k3/8/8/2n5/R7/8/8/4K3','~','Ta tour est attaquée par un cavalier : mets-la à l’abri.'],
+['Sauve ton cavalier','4k3/8/8/3p4/4N3/8/8/4K3','~','Un pion attaque ton cavalier : retire-le sur une case sûre.'],
+['Évite le mat du couloir','4r1k1/5ppp/8/8/8/8/5PPP/6K1','~','Les Noirs menacent Te1 mat ! Offre une case de fuite à ton roi.'],
+['Sauve ton fou','4k3/8/8/8/1n6/3B4/8/4K3','~','Un cavalier attaque ton fou : attention aux cases que le cavalier contrôle.'],
+['Dame attaquée','4k3/8/8/1n6/3Q4/8/8/4K3','~','Un cavalier attaque ta dame : trouve une case sûre, sans tomber sur une autre case attaquée.'],
+['Le roi capture','4k3/8/8/8/8/8/3b4/4K3','e1d2','Ton roi peut prendre une pièce non protégée, même celle qui donne échec.'],
+['Gambit Évans','','e2e4 e7e5 g1f3 b8c6 f1c4 f8c5 b2b4','Tu sacrifies un pion (b4) pour gagner du temps et prendre le centre.'],
+['Défense Philidor','','e2e4 e7e5 g1f3 d7d6 d2d4 e5d4 f3d4','Face à d6, tu ouvres le centre : d4, puis tu reprends avec le cavalier.'],
+['Défense scandinave','','e2e4 d7d5 e4d5 d8d5 b1c3','Tu prends le pion, puis tu gagnes un temps en attaquant la dame avec Cc3.'],
+['Défense moderne','','e2e4 d7d6 d2d4 g8f6 b1c3','Les Noirs te laissent le centre : occupe-le avec deux pions et un cavalier.'],
+['Défense hollandaise','','d2d4 f7f5 g2g3 g8f6 f1g2','Le fou en g2 vise la grande diagonale : c’est le fianchetto.'],
+['Ouverture Réti','','g1f3 d7d5 c2c4 e7e6 g2g3','Tu contrôles le centre à distance, avec cavalier, pions de flanc et fou.'],
+['Nimzo-indienne','','d2d4 g8f6 c2c4 e7e6 b1c3 f8b4 e2e3','Les Noirs clouent ton cavalier : réponds solidement avec e3.'],
+['Gambit du roi','','e2e4 e7e5 f2f4 e5f4 g1f3','Tu sacrifies un pion pour ouvrir la colonne f et attaquer vite.'],
+['Défense Pétrov','','e2e4 e7e5 g1f3 g8f6 f3e5 d7d6 e5f3','Les Noirs contre-attaquent : retire ton cavalier avant d’avancer au centre.'],
+['Ouverture du fou','','e2e4 e7e5 f1c4 g8f6 d2d3','Tu développes le fou vers f7 et gardes un centre solide.'],
+['Mat étouffé','6rk/6pp/8/6N1/8/8/8/6K1','#','Le roi est étouffé par ses propres pièces : un cavalier seul donne mat.'],
+['Dame et roi','6k1/8/6K1/8/8/8/8/3Q4','#','Ton roi coupe les cases de fuite, la dame donne le mat sur la dernière rangée.'],
+['Promotion','4k3/P7/8/8/8/8/8/4K3','a7a8','Un pion qui atteint la dernière rangée devient une dame.'],
+['Promotion avec prise','1r2k3/P7/8/8/8/8/8/4K3','a7b8','Le pion peut promouvoir en capturant : prends la tour en b8 !'],
+['Dame + fou en h7','5rk1/5ppp/8/7Q/8/8/2B5/6K1','#','Le fou protège la dame en h7 : le roi ne peut pas la prendre.'],
+['Couloir à la dame','6k1/5ppp/8/8/8/8/5PPP/3Q2K1','#','La dame aussi peut donner le mat du couloir.'],
+['Dame et cavalier','7k/8/8/5N2/8/8/8/6QK','#','Le cavalier protège la case g7 : la dame y donne mat.'],
+['Couloir inversé','1k6/ppp5/8/8/8/8/PPP5/1K2R3','#','Même idée que le mat du couloir, mais de l’autre côté de l’échiquier.'],
+['Le fou attaqué','4k3/8/8/4p3/3B4/8/8/4K3','~','Un pion attaque ton fou : retire-le ou prends le pion.'],
+['Tour attaquée','4k3/8/8/8/7b/8/8/4RK2','~','Un fou attaque ta tour : mets-la à l’abri.'],
+['Catalane','','d2d4 g8f6 c2c4 e7e6 g2g3 d7d5 f1g2','Une ouverture flexible : le fou en g2 pèse sur toute la grande diagonale.'],
+['Réti flexible','','g1f3 d7d5 g2g3 g8f6 f1g2','Tu ne fixes pas ton centre tout de suite : tu gardes le choix du plan.'],
+['Ruy López lente','','e2e4 e7e5 g1f3 b8c6 f1b5 a7a6 b5a4 g8f6 d2d3','Tu gardes la tension et tu recules le fou sans te presser.'],
+['Anglaise symétrique','','c2c4 c7c5 g1f3 g8f6 b1c3','Une position calme où le plan se décide plus tard, au milieu de jeu.'],
+['Berlinoise calme','','e2e4 e7e5 g1f3 b8c6 f1b5 g8f6 d2d3','Contre la Berlinoise, joue solide avec d3 et vise une longue partie.'],
+['Italienne lente','','e2e4 e7e5 g1f3 b8c6 f1c4 f8c5 c2c3 g8f6 d2d3','Tu prépares d4 sans te presser : la pression monte doucement.'],
+['Gambit dame solide','','d2d4 d7d5 c2c4 e7e6 b1c3 g8f6 c1g5','Un développement classique : toutes tes pièces comptent dans le jeu.'],
+['Sicilienne c3','','e2e4 c7c5 c2c3 d7d5 e4d5 d8d5 d2d4','Tu évites la grande théorie pour obtenir une position saine.'],
+['Pion passé','8/3P4/8/8/8/8/8/k1K5','d7d8','Convertir un avantage, c’est transformer le pion passé en dame.'],
+['Attention au pat !','k7/8/1K6/8/8/8/8/6Q1','#','Un coup tranquille mal choisi peut provoquer un pat : vérifie toujours que ton adversaire peut jouer. Trouve le vrai mat.']];
+const CT=['Ouvertures','Attaque','Défense','Ouvertures avancées','Finales et maîtrise','Style Carlsen'],FEN=s=>(s||'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR').split('/').flatMap(r=>[...r].flatMap(x=>/\d/.test(x)?Array(+x).fill(''):x)),ix=u=>(8-u[1])*8+'abcdefgh'.indexOf(u[0]),$=id=>document.getElementById(id);
+let mode='h',LI=0,tk=0,fin=false;
+function ld(){try{return JSON.parse(localStorage.getItem('ech')||'[]')}catch(e){return[]}}
+function okm(t,i,j){if(t==='*')return true;if(t==='#'){const n=make(B,i,j);return chk(n,false)&&!all(n,false).length}
+if(t==='~')return score(B,i,j)>=ev(B)-60;return t.split('|').includes(sq(i)+sq(j))}
+function show(m){mode=m;$('hm').hidden=m!=='h';$('ls').hidden=m!=='l'&&m!=='c';$('gv').hidden=m!=='p'&&m!=='g';$('bk').hidden=m==='h';$('gv').className=m==='p'?'l':'';$('lp').hidden=m!=='p';
+if(m==='l'||m==='c'){bm=m;lst(m==='c')}if(m==='h')$('xh').innerHTML=xp(ld().length);if(m==='g'){init();if(carl)msg='🧠 Bot Carlsen : solide, patient, il punit les erreurs.';render()}}
+function lst(cm){const d=ld();let h=`${cm?`<div class='xp'>🧠 <b>Style Carlsen</b><br>Inspiré de Magnus Carlsen : ouvertures flexibles, patience, pression lente et conversion des petits avantages. Personne ne joue « exactement » comme lui, mais tu peux t’entraîner dans cet esprit.<br><button class='p' data-m='g'>♟ Affronter le bot Carlsen</button></div>`:xp(d.length)}`;
+CT.forEach((c,k)=>{if(cm?k!==5:k===5)return;h+=`<h3>${IC[k]} ${c}</h3><div class='g k${k}'>`+LV.slice(k*10,k*10+10).map((l,i)=>`<button data-n='${k*10+i}' class='${d.includes(k*10+i)?'dn':''}'>${d.includes(k*10+i)?'✅':k*10+i+1}. ${l[0]}</button>`).join('')+'</div>'});$('ls').innerHTML=h}
+function lpr(){const L=LV[LI],T=L[2].split(' '),o=T.length>1?'Joue cette ouverture avec les Blancs.':T[0]==='#'?'Trouve le mat en 1 coup.':'Trouve le bon coup.';
+$('lp').innerHTML=`<b>Niveau ${LI+1} · ${L[0]}</b>🎯 ${o}<br>💡 ${L[3]}<br><button data-a='h'>Indice</button> <button data-a='r'>Recommencer</button> <button data-a='c'>Explique-moi</button>`+(fin&&LI<LV.length-1?` <button class='p' data-a='n'>Niveau suivant →</button>`:'')}
+function openL(n){LI=n;tk=0;fin=false;B=FEN(LV[n][1]);turn='w';sel=null;last=null;over=false;showRc=false;lastNote='';H=[];msg='À toi de jouer !';show('p');lpr();render()}
+function lmove(i,j){if(fin)return;const T=LV[LI][2].split(' ');
+if(!okm(T[tk],i,j)){sel=null;msg='Ce n’est pas ça… réessaie (bouton Indice).';return render()}
+B=make(B,i,j);last=[i,j];sel=null;
+if(tk+1>=T.length){fin=true;const d=ld();if(!d.includes(LI)){d.push(LI);try{localStorage.setItem('ech',JSON.stringify(d))}catch(e){}}msg='🎉 Bravo, niveau réussi !';boom();lpr();return render()}
+const r=T[tk+1],L0=LI;tk+=2;const k0=tk;turn='b';msg='L’adversaire répond…';render();
+setTimeout(()=>{if(mode!=='p'||LI!==L0||tk!==k0)return;const a=ix(r.slice(0,2)),b=ix(r.slice(2));B=make(B,a,b);last=[a,b];turn='w';msg='À toi de jouer !';render()},600)}
+function hint(){if(fin||turn!=='w')return;const t=LV[LI][2].split(' ')[tk],m=all(B,true).find(([i,j])=>okm(t,i,j));if(m){sel=m[0];msg='Indice : bouge cette pièce.';render()}}
+$('lp').onclick=e=>{const a=e.target.dataset.a;if(!a)return;if(a==='h')hint();else if(a==='r')openL(LI);else if(a==='n')openL(LI+1);else ask('Explique-moi le niveau « '+LV[LI][0]+' » : l’idée, pourquoi c’est bon, et les pièges à éviter.',1)};
+$('ls').onclick=e=>{const b=e.target.closest('button');if(b){if(b.dataset.m){carl=1;show('g')}else openL(+b.dataset.n)}};
+$('hm').onclick=e=>{const b=e.target.closest('button');if(b){carl=0;show(b.dataset.m)}};
+$('bk').onclick=()=>show(mode==='p'?bm:'h');
+let bm='l',carl=0;
+function cpuC(){const L=all(B,false);let best=null,bv=1e9;
+for(const[i,j]of L){const n=make(B,i,j),R=all(n,true);let v;
+if(!R.length)v=chk(n,true)?-5000:0;else{v=-1e9;for(const[a,e]of R){const q=make(n,a,e);let x=ev(q);if(chk(q,false)&&!all(q,false).length)x=5000;v=Math.max(v,x)}}
+v+=Math.random()*8;if(v<bv){bv=v;best=[i,j]}}
+if(best)play(...best)}
+const RK=['Pion','Cavalier','Fou','Tour','Dame','Roi'],IC=['📖','⚔️','🛡️','🏰','👑','🧠'];
+function xp(n){const t=LV.length,r=Math.min(5,n/9|0);return `<div class='xp'><b>${'♟♞♝♜♛♚'[r]} Rang : ${RK[r]}</b> · ${n}/${t} niveaux<div class='bar'><i style='width:${n/t*100}%'></i></div></div>`}
+function boom(){for(let i=0;i<26;i++){const s=document.createElement('span');s.className='cf';s.textContent=['🎉','♛','⭐','♞','✨'][i%5];s.style.left=Math.random()*95+'vw';s.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),2600)}}
+$('dl').onclick=async()=>{try{const d=await claude.use('downloads');if(!d){$('ins').hidden=false;return}await d.save({filename:'chess-quest.html',data:SRC})}catch(e){$('ins').hidden=false}};
+$('ih').onclick=()=>{$('ins').hidden=!$('ins').hidden};
+const TH=['emeraude','ocean','rose','neon'],TL=['Émeraude','Océan','Rose','Néon'];let tn=0;try{tn=+localStorage.getItem('cqt')||0}catch(e){}
+function setT(){document.body.dataset.t=TH[tn];$('th').textContent='🎨 '+TL[tn]}
+$('th').onclick=()=>{tn=(tn+1)%4;try{localStorage.setItem('cqt',tn)}catch(e){}setT()};setT();
+function desc(){const f=w=>B.map((p,i)=>p&&isW(p)===w?LT[p.toLowerCase()]+sq(i):"").filter(Boolean).join(" ");
+return (mode==='p'?'Exercice en cours : '+LV[LI][0]+' ('+LV[LI][3]+')\n':'')+"Blancs (le joueur) : "+f(true)+"\nNoirs (ordinateur) : "+f(false)+"\nCoups joués : "+(H.map(h=>h.s).join(" ")||"aucun")+(lastNote?"\nNote de l’appli pour le dernier coup du joueur : "+lastNote:"")+"\nAu tour des "+(turn==="w"?"Blancs":"Noirs")+"."+(sel!=null?"\nPièce sélectionnée : "+NM[B[sel].toLowerCase()]+" en "+sq(sel)+", elle peut aller en : "+(lg(B,sel).map(sq).join(", ")||"nulle part")+".":"")}
+let S=null,busy=false;
+const lgEl=document.getElementById("lg");
+function bub(c,t){const d=document.createElement("div");d.className=c;d.textContent=t;lgEl.appendChild(d);lgEl.scrollTop=lgEl.scrollHeight;return d}
+async function ask(q,ctx){if(busy||!q)return;if(!S){bub("a","Le coach n’est pas disponible ici.");return}
+busy=true;bub("u",q);const a=bub("a","…");
+const sys="Tu es un coach d’échecs bienveillant pour un débutant francophone. Réponds en français, en moins de 120 mots, simplement, avec la notation (ex. e4, Cf3). Notation : R roi, D dame, T tour, F fou, C cavalier. Le joueur a les Blancs, l’ordinateur les Noirs. L’appli n’a ni roque ni prise en passant : ne les suggère pas. Explique le pourquoi des idées.\n\n";
+try{await S(sys+(ctx?"Position actuelle :\n"+desc()+"\n\n":"")+"Question de l’élève : "+q,{cache:false,onText:({text})=>{a.textContent=text;lgEl.scrollTop=lgEl.scrollHeight}})}
+catch(e){a.textContent=e&&e.code==="not_granted"?"Autorisation refusée : je ne peux pas répondre.":"Oups, je n’ai pas pu répondre. Réessaie dans un instant."}
+busy=false}
+const Q=[["Conseille-moi un coup","Quel coup me conseilles-tu maintenant, et pourquoi ?",1],["Explique ma pièce","Explique-moi comment bouge la pièce sélectionnée et à quoi elle sert. Si aucune n’est sélectionnée, dis-moi d’en toucher une.",1],["Pourquoi cette note ?","Explique-moi la note que l’appli a donnée à mon dernier coup : qu’était-il de bien ou de mal, et quelle était l’idée du meilleur coup ?",1],["Comment bougent les pièces ?","Explique-moi comment chaque pièce bouge, avec leur valeur.",0],["Les règles de base","Explique-moi les règles de base : but du jeu, échec, mat, pat.",0],["Bien débuter","Donne-moi 5 principes simples pour bien débuter une partie.",0]];
+const qk=document.getElementById("qk");
+Q.forEach(([l,q,c])=>{const b=document.createElement("button");b.textContent=l;b.onclick=()=>ask(q,c);qk.appendChild(b)});
+const qi=document.getElementById("q");
+document.getElementById("go").onclick=()=>{const v=qi.value.trim();qi.value="";ask(v,1)};
+qi.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("go").click()}};
+(async()=>{try{S=await claude.use("sample")}catch(e){}
+if(!S){document.getElementById("co").style.display="none"}})();
+init();render();show('h');
+</script><script>
+(()=>{let ready=0,res=null,elo=1600;
+window.onSF=m=>{if(m==='uciok')AndroidSF.send('isready');else if(m==='readyok'){ready=1;ui()}else if(m.startsWith('bestmove')&&res){const r=res;res=null;r(m.split(' ')[1])}};
+if(!window.AndroidSF||!AndroidSF.start())return;
+AndroidSF.send('uci');
+function ui(){const d=document.createElement('label');d.className='xp';d.innerHTML="🤖 Niveau du bot Stockfish <select style='background:#0006;color:#fff;border:1px solid #fff5;border-radius:8px;padding:6px;margin-left:6px'><option value='1320'>Débutant (1320)</option><option value='1600' selected>Club (1600)</option><option value='1900'>Confirmé (1900)</option><option value='2200'>Expert (2200)</option><option value='2500'>Maître (2500)</option></select><br><small>Le mode Style Carlsen joue à ~2830.</small>";
+document.getElementById('xh').after(d);d.querySelector('select').onchange=e=>{elo=+e.target.value}}
+function fen(){let s='';for(let r=0;r<8;r++){let n=0;for(let c=0;c<8;c++){const p=B[r*8+c];if(p){if(n)s+=n;n=0;s+=p}else n++}if(n)s+=n;if(r<7)s+='/'}return s+' '+(turn==='w'?'w':'b')+' - - 0 1'}
+const o=cpu;
+cpu=function(){if(!ready||mode!=='g')return o();
+AndroidSF.send('setoption name UCI_LimitStrength value true');AndroidSF.send('setoption name UCI_Elo value '+(carl?2830:elo));
+AndroidSF.send('position fen '+fen());AndroidSF.send('go movetime 700');
+let done=0;const t=setTimeout(()=>{if(!done){done=1;res=null;o()}},6000);
+new Promise(r=>res=r).then(u=>{if(done)return;done=1;clearTimeout(t);if(mode!=='g'||turn!=='b'||over)return;const i=ix(u.slice(0,2)),j=ix(u.slice(2,4));if(all(B,false).some(m=>m[0]===i&&m[1]===j))play(i,j);else o()})}
+})();
+</script>
+</body></html>
